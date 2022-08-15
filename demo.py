@@ -42,6 +42,7 @@ def get_args():
     parser.add_argument("--fft_n", type=int, default=1024)
 
     parser.add_argument("--draw_type", type=int, default=0)
+    parser.add_argument("--color", type=str, default=None)
 
     args = parser.parse_args()
 
@@ -173,6 +174,11 @@ def main():
     fft_sample_size = args.fft_n
 
     draw_type = args.draw_type
+    color = args.color
+    if color is not None:
+        color = tuple(map(int, color.split(',')))
+        assert len(
+            color) == 3, 'Specify the color in BGR format Example: 255,255,255'
 
     # 画像準備
     bg_image_capture = ImageCapture(bg_device, bg_movie, bg_image)
@@ -279,11 +285,19 @@ def main():
             )
 
             # オーディオスペクトラム描画
-            audio_spectrum_image = draw_function_list[draw_type](
-                amplitude_spectrum,
-                sampling_data,
-                bg_image=extract_image,
-            )
+            if color is not None:
+                audio_spectrum_image = draw_function_list[draw_type](
+                    amplitude_spectrum,
+                    sampling_data,
+                    plot_color=color,
+                    bg_image=extract_image,
+                )
+            else:
+                audio_spectrum_image = draw_function_list[draw_type](
+                    amplitude_spectrum,
+                    sampling_data,
+                    bg_image=extract_image,
+                )
 
             # はめ込み画像合成
             debug_image = cv_overlay_inset_image(
