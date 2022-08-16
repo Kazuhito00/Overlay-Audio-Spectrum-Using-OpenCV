@@ -184,7 +184,7 @@ def main():
     bg_image_capture = ImageCapture(bg_device, bg_movie, bg_image)
 
     # ウィンドウ準備
-    cv_window = CvWindow(window_name='Sample', point_history_maxlen=4)
+    cv_window = CvWindow(window_name='Demo', point_history_maxlen=4)
 
     # オーディオストリームを開く
     audio = pyaudio.PyAudio()
