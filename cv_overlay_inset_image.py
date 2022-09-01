@@ -7,10 +7,11 @@ import numpy as np
 
 
 def cv_overlay_inset_image(
-    background_image,
-    overlay_image,
-    points,
-    mask_offet=2,
+        background_image,
+        overlay_image,
+        points,
+        border_color=(0, 0, 0),
+        mask_offet=2,
 ):
     assert len(points) == 4, 'Coordinates point must be 4 points'
 
@@ -39,6 +40,7 @@ def cv_overlay_inset_image(
         overlay_image,
         M,
         (background_image_w, background_image_h),
+        borderValue=border_color,
     )
 
     # マスク画像生成

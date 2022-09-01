@@ -43,6 +43,7 @@ def get_args():
 
     parser.add_argument("--draw_type", type=int, default=0)
     parser.add_argument("--color", type=str, default=None)
+    parser.add_argument("--border_color", type=str, default='255,255,255')
 
     args = parser.parse_args()
 
@@ -179,6 +180,12 @@ def main():
         color = tuple(map(int, color.split(',')))
         assert len(
             color) == 3, 'Specify the color in BGR format Example: 255,255,255'
+    border_color = args.border_color
+    if border_color is not None:
+        border_color = tuple(map(int, border_color.split(',')))
+        assert len(
+            border_color
+        ) == 3, 'Specify the border_color in BGR format Example: 255,255,255'
 
     # 画像準備
     bg_image_capture = ImageCapture(bg_device, bg_movie, bg_image)
@@ -304,6 +311,7 @@ def main():
                 bg_image,
                 audio_spectrum_image,
                 click_point_history,
+                border_color=border_color,
             )
 
         # 画面反映
