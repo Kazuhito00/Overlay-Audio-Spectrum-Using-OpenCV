@@ -43,7 +43,7 @@ def get_args():
 
     parser.add_argument("--draw_type", type=int, default=0)
     parser.add_argument("--color", type=str, default=None)
-    parser.add_argument("--border_color", type=str, default='255,255,255')
+    parser.add_argument("--border_color", type=str, default='0,0,0')
 
     args = parser.parse_args()
 
