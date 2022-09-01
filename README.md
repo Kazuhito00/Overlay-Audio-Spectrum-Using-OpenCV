@@ -83,6 +83,9 @@ Contentsの描画種別<br>
 * --color<br>
 重畳描画するオーディオスペクトラムや波形の色指定<br>
 デフォルト：指定なし ※指定時はBGRで255,255,255のように指定
+* --border_color<br>
+warpPerspectiveの境界の色<br>
+デフォルト：0,0,0
 
 # Author
 高橋かずひと(https://twitter.com/KzhtTkhs)
