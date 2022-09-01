@@ -57,7 +57,7 @@ PyAudio 0.2.11         or later
 # Usage
 デモの実行方法は以下です。
 ```bash
-python demo.py --wave=Grassland.wav
+python demo.py --wave=[Your wav file]
 ```
 * --bg_image<br>
 背景画像のパス指定<br>
@@ -89,3 +89,6 @@ Contentsの描画種別<br>
  
 # License 
 Overlay-Audio-Spectrum-Using-OpenCV is under [Apache-2.0 license](LICENSE).<br><br>
+
+また、サンプル画像は[フリー素材ぱくたそ](https://www.pakutaso.com)様の<br>
+「[ずっと使われていない天井吊りのテレビの写真素材](https://www.pakutaso.com/20180344079post-15604.html)」を利用しています。
