@@ -227,20 +227,33 @@ def main():
     # ハミング窓生成
     hamming_window = np.hamming(fft_sample_size)
 
-    while True:
-        # 音声ファイル読み込み
-        if filename is not None:
-            # Waveファイル フレーム読み込み
-            audio_frame = wave_file.readframes(frame_n)
-            if audio_frame == b'':
-                # break
-                wave_file.rewind()
-        else:
-            # デバイスからの読み込み
-            audio_frame = audio_stream.read(frame_n)
+    # オーディオ開始フラグ
+    audio_started = False
+    audio_frame = None
 
-        # フレーム再生
-        audio_stream.write(audio_frame)
+    while True:
+        # クリック位置取得
+        click_point_history = cv_window.get_click_point_history()
+        
+        # 4隅が選択されたらオーディオ開始
+        if len(click_point_history) == 4 and not audio_started:
+            audio_started = True
+        
+        # オーディオ処理（4隅選択後のみ）
+        if audio_started:
+            # 音声ファイル読み込み
+            if filename is not None:
+                # Waveファイル フレーム読み込み
+                audio_frame = wave_file.readframes(frame_n)
+                if audio_frame == b'':
+                    # break
+                    wave_file.rewind()
+            else:
+                # デバイスからの読み込み
+                audio_frame = audio_stream.read(frame_n)
+
+            # フレーム再生
+            audio_stream.write(audio_frame)
 
         # 画像読み込み
         ret, bg_image = bg_image_capture.read()
@@ -248,23 +261,25 @@ def main():
             break
         debug_image = copy.deepcopy(bg_image)
 
-        # オーディオスペクトラム用データを生成
-        # 正規化バッファ取得
-        audio_buffer = np.frombuffer(audio_frame, dtype="int16") / 32767
-        # 一部分のみ切り出し
-        # （正確なスペクトログラムが欲しいわけではないので処理時間短縮のためにシフト省略）
-        if audio_buffer.shape[0] > fft_sample_size:
-            sampling_data = audio_buffer[audio_buffer.shape[0] -
-                                         fft_sample_size:]
-        # 窓適応
-        sampling_data = hamming_window * sampling_data
-        # 周波数解析
-        frequency = np.fft.fft(sampling_data)
-        amplitude = np.abs(frequency)
-        amplitude_spectrum = 20 * np.log(amplitude)
-
-        # クリック位置取得
-        click_point_history = cv_window.get_click_point_history()
+        # オーディオスペクトラム用データを生成（オーディオ開始後のみ）
+        if audio_started and audio_frame is not None:
+            # 正規化バッファ取得
+            audio_buffer = np.frombuffer(audio_frame, dtype="int16") / 32767
+            # 一部分のみ切り出し
+            # （正確なスペクトログラムが欲しいわけではないので処理時間短縮のためにシフト省略）
+            if audio_buffer.shape[0] > fft_sample_size:
+                sampling_data = audio_buffer[audio_buffer.shape[0] -
+                                             fft_sample_size:]
+            # 窓適応
+            sampling_data = hamming_window * sampling_data
+            # 周波数解析
+            frequency = np.fft.fft(sampling_data)
+            amplitude = np.abs(frequency)
+            amplitude_spectrum = 20 * np.log(amplitude)
+        else:
+            # オーディオ未開始時はダミーデータ
+            sampling_data = np.zeros(fft_sample_size)
+            amplitude_spectrum = np.zeros(fft_sample_size // 2 + 1)
 
         # デバッグ描画
         if len(click_point_history) < 4:
